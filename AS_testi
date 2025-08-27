@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Antisäätäjä-pikatesti 🔥</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #fdffef;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #d74f46, #e17674);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .question {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+        
+        .question.active {
+            display: block;
+        }
+        
+        .question h3 {
+            font-size: 1.4em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .options {
+            display: grid;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        
+        .option {
+            padding: 15px 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+        
+        .option:hover {
+            border-color: #d74f46;
+            background: #fdffef;
+            transform: translateY(-2px);
+        }
+        
+        .option.selected {
+            border-color: #d74f46;
+            background: #e17674;
+            color: white;
+        }
+        
+        .progress {
+            width: 100%;
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(45deg, #d74f46, #e17674);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        
+        .btn {
+            background: linear-gradient(45deg, #d74f46, #e17674);
+            color: white;
+            padding: 15px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .result.active {
+            display: block;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        .result-type {
+            font-size: 3em;
+            margin: 20px 0;
+        }
+        
+        .result h2 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+        
+        .result-description {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .cta {
+            background: linear-gradient(45deg, #1b1a19, #d74f46);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .question-counter {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔥 ANTISÄÄTÄJÄ-PIKATESTI</h1>
+            <p>Testaa millainen ajankäyttäjä olet!</p>
+        </div>
+        
+        <div class="content">
+            <div id="intro" class="question active">
+                <h3>Oletko jyrä, jokapaikansäätäjä, mukautuja vai superfokustaja? 🤔</h3>
+                <p style="margin-bottom: 20px; color: #666;">Tämä selviää kahdessa minuutissa... ➡️</p>
+                <button class="btn" onclick="startTest()">Aloitetaan! 🚀</button>
+            </div>
+            
+            <div class="progress" id="progress" style="display: none;">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            
+            <div class="question-counter" id="counter" style="display: none;"></div>
+            
+            <!-- Kysymykset generoituvat JavaScriptillä -->
+            
+            <div id="result" class="result">
+                <!-- Tulos näytetään täällä -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                question: "Kun sinulla on kiire, sinä:",
+                options: [
+                    { text: "Valvot muutaman yön ja homma hoituu 💪", type: "D" },
+                    { text: "Kerrot kaikille miten kiire sinulla on - ja siihen se aika meneekin 😅", type: "I" },
+                    { text: "Stressaat ja toivot salaa, että joku auttaisi 😰", type: "S" },
+                    { text: "Jäädyt, koska et tiedä mistä aloittaa 🤯", type: "C" }
+                ]
+            },
+            {
+                question: "Deadlinejen kanssa:",
+                options: [
+                    { text: "Teen viime hetkellä, ja ihan riittävän hyvin 🔥", type: "D" },
+                    { text: "Nooh ne ylittyvät usein vähän, mutta ei se niin vakavaa ole ⏰", type: "I" },
+                    { text: "Pelkään niitä ja aloitan liian ajoissa 😬", type: "S" },
+                    { text: "Jumitun ja lykkään aloittamista 🙈", type: "C" }
+                ]
+            },
+            {
+                question: "Kalenterisi näyttää:",
+                options: [
+                    { text: "Tehokkaan prosessin - ei aikaa höpötykselle 🤖", type: "D" },
+                    { text: "Värikkäältä sirkukselta - kaikki kiinnostaa! 🎪", type: "I" },
+                    { text: "Huolella suunnitellulta - ennustettavuus on kivaa 📅", type: "S" },
+                    { text: "Minimalistiselta - sinua ei aikaoptimismista syytellä 📝", type: "C" }
+                ]
+            },
+            {
+                question: "Kun joku pyytää apua:",
+                options: [
+                    { text: "Hoidan asian itse, koska teen sen lopulta nopeammin kuin muut 🤯", type: "D" },
+                    { text: "Sanon kyllä, koska olen mukava tyyppi ja hätäkö tässä nyt 💕", type: "I" },
+                    { text: "En osaa sanoa ei, vaikka aika loppuu 😔", type: "S" },
+                    { text: "Analysoin onko minulla kompetenssia auttaa 🔍", type: "C" }
+                ]
+            },
+            {
+                question: "Multitasking on:",
+                options: [
+                    { text: "Välillä välttämätöntä, koska on paljon tehtävää ja säälittävän vähän aikaa 🦸", type: "D" },
+                    { text: "Elämäntapa, koska on tylsää keskittyä vain yhteen juttuun 🤹", type: "I" },
+                    { text: "Stressin lähde. Haluaisin keskittyä vain yhteen asiaan, mutta en voi 😵", type: "S" },
+                    { text: "Tehoton työtapa. Laatu kärsii, mikä siinä on niin vaikea ymmärtää? ❌", type: "C" }
+                ]
+            }
+        ];
+
+        const types = {
+            D: {
+                emoji: "⚡",
+                title: "Jyräävä suorittaja",
+                description: "Sinä rakennat imperiumeja yökaudet valvoen, koska jonkun se homma vaan on hoidettava. Suurin haasteesi on delegointi ja realistiset odotukset erityisesti muita kohtaan. Kun sanot, että on järkyttävä kiire, niin onko oikeasti?",
+                strengths: "Saat asioita aikaan, teet nopeita päätöksiä ja olet luontaisesti tehokas",
+                challenges: "Olet välillä turhankin kärsimätön, et mielelläsi delegoi ja luot kiireyden ilmapiiriä",
+                tip: "🎯 Sinun sisäinen rytmisi on kiihkeämpi kuin useimmilla muilla. He eivät välttämättä ole hitaita - sinä olet elosalama."
+            },
+            I: {
+                emoji: "🎪",
+                title: "Innostuva jokapaikansäätäjä", 
+                description: "Kaikki on niin kiinnostavaa! FOMO on sinun toinen nimi ja kalenteri näyttää värikkäältä sirkukselta. Suurin haasteesi: keskittyminen ja priorisointi.",
+                strengths: "Energinen, sosiaalinen, luova ongelmanratkoja",
+                challenges: "FOMO, aikaoptimisti, ylibuukkaaja",
+                tip: "✂️ Karsi brutaalisti ja usko, että joskus maailma pyörii ilman sinuakin."
+            },
+            S: {
+                emoji: "🤝",
+                title: "Joustava mukautuja",
+                description: "Sinä pidät maailman kasassa olemalla joustava ja mukava! Tämä on myös kirous silloin, kun et osaa sanoa ei. Suurin haasteesi on rajojen vetämisen opettelussa.",
+                strengths: "Luotettava, yhteistyökykyinen, prosessiosaaminen", 
+                challenges: "Ei osaa sanoa ei, stressaa muutoksista, liian joustava",
+                tip: "🛡️ Sinua rakastetaan, vaikka et suostu aivan kaikkeen."
+            },
+            C: {
+                emoji: "🔍",
+                title: "Superfokusoiva täydellistäjä",
+                description: "Laatu on kunniasi! Mutta täydellisyydentavoittelu syö aikaa kuin musta aukko. Suurin haasteesi on riittävän hyvän hyväksyminen.",
+                strengths: "Laadukas työn jälki, huolellinen, luotettava",
+                challenges: "Täydellisyydentavoittelu, lykkää aloittamista, tuottaa ylilaatua",
+                tip: "⏰ Aina ei voi tehdä sataa prosenttia."
+            }
+        };
+
+        let currentQuestion = 0;
+        let scores = { D: 0, I: 0, S: 0, C: 0 };
+
+        function startTest() {
+            document.getElementById('intro').classList.remove('active');
+            document.getElementById('progress').style.display = 'block';
+            document.getElementById('counter').style.display = 'block';
+            showQuestion(0);
+        }
+
+        function showQuestion(index) {
+            // Poista vanhat kysymykset
+            document.querySelectorAll('.question:not(#intro)').forEach(q => q.remove());
+            
+            if (index >= questions.length) {
+                showResult();
+                return;
+            }
+
+            currentQuestion = index;
+            updateProgress();
+            updateCounter();
+
+            const questionData = questions[index];
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'question active';
+            questionDiv.innerHTML = `
+                <h3>${questionData.question}</h3>
+                <div class="options">
+                    ${questionData.options.map((option, i) => 
+                        `<div class="option" onclick="selectOption(${i})">${option.text}</div>`
+                    ).join('')}
+                </div>
+                <button class="btn" id="nextBtn" onclick="nextQuestion()" disabled>Seuraava kysymys →</button>
+            `;
+            
+            document.querySelector('.content').appendChild(questionDiv);
+        }
+
+        function selectOption(optionIndex) {
+            // Poista aiemmat valinnat
+            document.querySelectorAll('.option').forEach(opt => opt.classList.remove('selected'));
+            
+            // Merkitse valittu
+            document.querySelectorAll('.option')[optionIndex].classList.add('selected');
+            
+            // Tallenna pisteet
+            const selectedType = questions[currentQuestion].options[optionIndex].type;
+            scores[selectedType]++;
+            
+            // Aktivoi seuraava-nappi
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        function nextQuestion() {
+            showQuestion(currentQuestion + 1);
+        }
+
+        function updateProgress() {
+            const progress = ((currentQuestion) / questions.length) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+        }
+
+        function updateCounter() {
+            document.getElementById('counter').textContent = `Kysymys ${currentQuestion + 1}/${questions.length}`;
+        }
+
+        function showResult() {
+            document.getElementById('progress').style.display = 'none';
+            document.getElementById('counter').style.display = 'none';
+            
+            // Poista kysymykset
+            document.querySelectorAll('.question:not(#intro)').forEach(q => q.remove());
+            
+            // Laske tulos
+            const maxScore = Math.max(...Object.values(scores));
+            const resultType = Object.keys(scores).find(key => scores[key] === maxScore);
+            const typeData = types[resultType];
+            
+            document.getElementById('result').innerHTML = `
+                <div class="result-type">${typeData.emoji}</div>
+                <h2>${typeData.title}</h2>
+                <div class="result-description">
+                    <p><strong>Sinä olet:</strong> ${typeData.description}</p>
+                    <br>
+                    <p><strong>💪 Vahvuutesi:</strong> ${typeData.strengths}</p>
+                    <br>
+                    <p><strong>⚠️ Haasteesi:</strong> ${typeData.challenges}</p>
+                    <br>
+                    <p><strong>💝 Emotionaalinen läksysi:</strong> ${typeData.tip}</p>
+                </div>
+                <div class="cta">
+                    <h3>🔥 Haluatko oppia rakentamaan kalenterin joka toimii juuri SINUN tyylillesi?</h3>
+                    <p style="margin: 10px 0;">2h workshop jossa rakennamme yhdessä toimivan ajanhallintasysteemin.</p>
+                    <button class="btn" onclick="window.open('https://anna-perho.kit.com/792bbb3e1c', '_blank')" style="background: #fdffef; color: #1b1a19; margin-top: 15px;">
+                        Nähdään pian! 🚀
+                    </button>
+                </div>
+            `;
+            
+            document.getElementById('result').classList.add('active');
+        }
+    </script>
+</body>
+</html>
